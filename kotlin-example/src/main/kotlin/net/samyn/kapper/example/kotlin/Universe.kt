@@ -14,6 +14,7 @@ data class SuperHeroBattle(val superhero: String, val villain: String, val date:
 
 class SuperHeroRepository(private val dataSource: DataSource) {
     private val dbType: DbType
+
     init {
         dbType = dataSource.connection.use {
             when (it.metaData.databaseProductName) {
@@ -28,20 +29,24 @@ class SuperHeroRepository(private val dataSource: DataSource) {
         MYSQL,
     }
 
+    // List all superheroes
     fun list(): List<SuperHero> = dataSource.connection.use {
         it.query<SuperHero>("SELECT * FROM super_heroes")
     }
 
+    // Find a superhero by ID
     fun findById(id: UUID) = dataSource.connection.use {
         it.querySingle<SuperHero>(
             "SELECT * FROM super_heroes WHERE id = :id", "id" to id)
     }
 
+    // Find a superhero by name
     fun findByName(name: String) = dataSource.connection.use {
         it.querySingle<SuperHero>(
             "SELECT * FROM super_heroes WHERE name = :name", "name" to name)
     }
 
+    // Find battles involving a specific superhero
     fun findBattles(superHeroName: String) = dataSource.connection.use {
         it.query<SuperHeroBattle>(
             """
@@ -54,6 +59,7 @@ class SuperHeroRepository(private val dataSource: DataSource) {
         )
     }
 
+    // Insert a new superhero
     fun insertHero(superHero: SuperHero) = dataSource.connection.use {
         it.execute(
             """
@@ -67,6 +73,7 @@ class SuperHeroRepository(private val dataSource: DataSource) {
         )
     }
 
+    // Insert a new battle involving a superhero and a villain
     fun insertBattle(
         superHero: SuperHero,
         villain: Villain,
@@ -118,5 +125,5 @@ class SuperHeroRepository(private val dataSource: DataSource) {
             "ON DUPLICATE KEY UPDATE $updateCol=$updateCol"
         } else {
             "ON CONFLICT DO NOTHING"
-    }
+        }
 }
