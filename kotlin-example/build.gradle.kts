@@ -17,7 +17,8 @@ repositories {
 }
 
 dependencies {
-    implementation("net.samyn:kapper:0.2.0-SNAPSHOT")
+//    implementation("net.samyn:kapper:0.2.0-SNAPSHOT")
+    implementation("net.samyn:kapper:1.0.0")
 
     testImplementation(libs.bundles.test)
     testImplementation(libs.hikari)
