@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
 
     `java-library`
+
+    // needed for hibernate!
+    id("org.jetbrains.kotlin.plugin.jpa") version "2.1.0"
 }
 
 repositories {
@@ -19,6 +22,10 @@ repositories {
 dependencies {
 //    implementation("net.samyn:kapper:0.2.0-SNAPSHOT")
     implementation("net.samyn:kapper:1.0.0")
+
+
+    // alternatives
+    implementation(libs.bundles.hibernate)
 
     testImplementation(libs.bundles.test)
     testImplementation(libs.hikari)

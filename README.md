@@ -1,6 +1,6 @@
 # kapper-examples
 
-Example usage of the [Kapper](https://github.com/driessamyn/kapper) library.
+KapperExample usage of the [Kapper](https://github.com/driessamyn/kapper) library.
 
 ## Overview
 
@@ -68,7 +68,7 @@ Separate scripts are provided for [PostgreSQL](./db/postgresql.sql) and [MySQL](
 
 ## Examples
 
-[Universe.kt](./src/main/kotlin/net/samyn/kapper/example/kotlin/Universe.kt) has an example repository class using the kapper API:
+[SuperHeroRepository.kt](./src/main/kotlin/net/samyn/kapper/example/kotlin/SuperHeroRepository.kt) has an example repository class using the kapper API:
 
 ### Simple SELECT query
 
@@ -213,7 +213,7 @@ This is further illustrated by the example below which uses a complex Window que
 
 ## A more complex example
 
-[Example](./src/test/kotlin/Example.kt) contains an additional, more complex, query, which serves as an example of how complex SQL queries can be used with Kapper without the need for a complex or new API.
+[KapperExample](./src/test/kotlin/KapperExample.kt) contains an additional, more complex, query, which serves as an example of how complex SQL queries can be used with Kapper without the need for a complex or new API.
 
 In this example, we use a Window function to calculate averages for a year, and map this to a new `PopularMovie` data class.
 

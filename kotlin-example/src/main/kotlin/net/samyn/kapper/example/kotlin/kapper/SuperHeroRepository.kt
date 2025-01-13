@@ -1,5 +1,9 @@
-package net.samyn.kapper.example.kotlin
+package net.samyn.kapper.example.kotlin.kapper
 
+import net.samyn.kapper.example.kotlin.PopularMovie
+import net.samyn.kapper.example.kotlin.SuperHero
+import net.samyn.kapper.example.kotlin.SuperHeroBattle
+import net.samyn.kapper.example.kotlin.Villain
 import net.samyn.kapper.execute
 import net.samyn.kapper.query
 import net.samyn.kapper.querySingle
@@ -7,10 +11,6 @@ import java.sql.SQLException
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.sql.DataSource
-
-data class SuperHero(val id: UUID, val name: String, val email: String? = null, val age: Int? = null)
-data class Villain(val id: UUID, val name: String)
-data class SuperHeroBattle(val superhero: String, val villain: String, val date: LocalDateTime)
 
 class SuperHeroRepository(private val dataSource: DataSource) {
     private val dbType: DbType
@@ -115,6 +115,34 @@ class SuperHeroRepository(private val dataSource: DataSource) {
             it.rollback()
             throw ex
         }
+    }
+
+    fun findPopularMovies(): List<PopularMovie> = dataSource.connection.use {
+        // example of complex query and custom mapper
+        var allTimeRank = 1
+        it.query(
+            """
+             SELECT
+             title,
+             release_date, 
+             gross_worldwide, 
+             AVG(gross_worldwide) OVER() AS total_average_gross,
+             AVG(gross_worldwide) OVER(PARTITION BY EXTRACT(YEAR FROM release_date)) AS average_annual_gross
+            FROM movies 
+            ORDER BY gross_worldwide DESC
+            LIMIT 3
+        """.trimIndent(),
+            { rs, _ ->
+                val gross = rs.getLong("gross_worldwide")
+                val annualAvgGross = rs.getInt("average_annual_gross")
+                PopularMovie(
+                    rs.getString("title"),
+                    gross,
+                    gross/annualAvgGross.toDouble(),
+                    allTimeRank++,
+                )
+            }
+        )
     }
 
     // example of something non-trivial that impacts the Query
