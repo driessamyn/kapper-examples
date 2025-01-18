@@ -290,6 +290,22 @@ class SuperHeroRepositoryTest {
 }
 ```
 
+## Comparison with ORMs
+
+### Hibernate
+
+The _Godfather_ of ORMs:
+
+- [Example code](kotlin-example/src/main/kotlin/net/samyn/kapper/example/hibernate/HibernateExample.kt)
+- [Example usage](kotlin-example/src/test/kotlin/net/samyn/kapper/example/hibernate/HibernateExampleTest.kt)
+
+### Ktorm
+
+The _new kid on the block:
+
+- [Example code](kotlin-example/src/main/kotlin/net/samyn/kapper/example/ktorm/KtormExample.kt)
+- [Example usage](kotlin-example/src/test/kotlin/net/samyn/kapper/example/ktorm/KtormExampleTest.kt)
+
 ## Performance Considerations
 
 - Use connection pooling (e.g., HikariCP) for optimal performance
