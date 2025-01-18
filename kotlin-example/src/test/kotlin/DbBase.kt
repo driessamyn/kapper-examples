@@ -15,8 +15,6 @@ import java.nio.file.Path
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class DbBase {
     companion object {
-
-
         @Container
         val postgresql = PostgreSQLContainer("postgres:16")
 
@@ -32,10 +30,11 @@ abstract class DbBase {
         @JvmStatic
         fun databaseContainers() = allContainers.map { arguments(named(it.key, it.value)) }
 
-        val initScripts = mapOf(
-            PostgreSQLContainer::class.java to "postgresql.sql",
-            MySQLContainer::class.java to "mysql.sql",
-        )
+        val initScripts =
+            mapOf(
+                PostgreSQLContainer::class.java to "postgresql.sql",
+                MySQLContainer::class.java to "mysql.sql",
+            )
     }
 
     val dbScripts = System.getProperty("db-migrations") ?: "../db"
@@ -48,8 +47,9 @@ abstract class DbBase {
     }
 
     private fun setupDatabase(container: JdbcDatabaseContainer<*>) {
-        val schemaFile = Path.of(dbScripts)
-            .resolve(initScripts[container::class.java]!!).toFile()
+        val schemaFile =
+            Path.of(dbScripts)
+                .resolve(initScripts[container::class.java]!!).toFile()
         getDataSource(container).connection.use { connection ->
             // initialising the DB the primitive way.
             connection.execute(schemaFile.readText())

@@ -55,7 +55,7 @@ class KapperExample : DbBase() {
             repo.insertBattle(
                 batman,
                 joker,
-                LocalDateTime.of(1994, 1, 19, 22, 5)
+                LocalDateTime.of(1994, 1, 19, 22, 5),
             )
 
             // find battles - example of a join
@@ -67,7 +67,10 @@ class KapperExample : DbBase() {
             val popularMovies = repo.findPopularMovies()
             popularMovies.shouldHaveSize(3)
             popularMovies.map { it.title }.shouldContainAll(
-                "Avengers: Endgame", "Avengers: Infinity War", "Spider-Man: No Way Home")
+                "Avengers: Endgame",
+                "Avengers: Infinity War",
+                "Spider-Man: No Way Home",
+            )
             popularMovies.forEach {
                 println("${it.title} took ${it.grossed}, or ${it.comparedToAnnualAverage} compared to the annual average.")
                 it.comparedToAnnualAverage.shouldBeGreaterThan(1.0)

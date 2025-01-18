@@ -13,4 +13,5 @@ data class PopularMovie(
     val title: String,
     val grossed: Long,
     val comparedToAnnualAverage: Double,
-    val allTimeRanking: Int)
+    val allTimeRanking: Int,
+)

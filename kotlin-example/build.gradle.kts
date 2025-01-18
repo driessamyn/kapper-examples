@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.ktlint)
 
     `java-library`
 
@@ -22,14 +23,13 @@ repositories {
 dependencies {
 //    implementation("net.samyn:kapper:0.2.0-SNAPSHOT")
     implementation("net.samyn:kapper:1.0.0")
-
-
     // alternatives
+    //  hibernate
     implementation(libs.bundles.hibernate)
-
+    //  ktorm
+    implementation(libs.bundles.ktorm)
     testImplementation(libs.bundles.test)
     testImplementation(libs.hikari)
-
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly(libs.bundles.dbs)
     testRuntimeOnly(libs.slf4j.simple)
@@ -39,6 +39,14 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+}
+
+tasks.check {
+    dependsOn(tasks.ktlintCheck)
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    dependsOn(tasks.ktlintFormat)
 }
 
 tasks.named<Test>("test") {

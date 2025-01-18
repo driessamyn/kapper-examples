@@ -11,6 +11,7 @@ test-conatainers = "1.20.4"
 hibernate-version = "6.6.4.Final"
 hibernate-validator-version = "8.0.0.Final"
 glassfish-jakarta = "4.0.2"
+ktorm = "4.1.1"
 
 [libraries]
 hikari = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
@@ -24,12 +25,19 @@ test-containers-junit-mysql = { module = "org.testcontainers:mysql", version.ref
 test-containers-junit-postgresql = { module = "org.testcontainers:postgresql", version.ref = "test-conatainers" }
 
 # alternatives
+# hibernate
 hibernate-core = { module = "org.hibernate:hibernate-core", version.ref = "hibernate-version" }
 hibernate-validator = { module = "org.hibernate.validator:hibernate-validator", version.ref = "hibernate-validator-version" }
 glasfish-jakarta = { module = "org.glassfish:jakarta.el", version.ref = "glassfish-jakarta" }
 
+# ktorm
+ktorm-core = { module = "org.ktorm:ktorm-core", version.ref = "ktorm" }
+ktorm-mysql = { module = "org.ktorm:ktorm-support-mysql", version.ref = "ktorm" }
+ktorm-postgresql = { module = "org.ktorm:ktorm-support-postgresql", version.ref = "ktorm" }
+
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.0.21" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "12.1.2" }
 
 [bundles]
 test = [
@@ -39,3 +47,5 @@ test = [
 dbs = ["mysql-driver", "postgresql-driver"]
 
 hibernate = ["hibernate-core", "hibernate-validator", "glasfish-jakarta"]
+
+ktorm = ["ktorm-core", "ktorm-mysql", "ktorm-postgresql"]
