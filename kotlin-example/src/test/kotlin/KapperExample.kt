@@ -3,10 +3,12 @@ import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.doubles.shouldBeGreaterThan
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import net.samyn.kapper.example.kotlin.SuperHero
 import net.samyn.kapper.example.kotlin.Villain
 import net.samyn.kapper.example.kotlin.kapper.SuperHeroRepository
+import net.samyn.kapper.querySingle
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.testcontainers.containers.JdbcDatabaseContainer
@@ -62,6 +64,24 @@ class KapperExample : DbBase() {
             val battles = repo.findBattles(batman.name)
             battles.shouldHaveSize(3)
             battles.map { it.villain }.shouldContainAll("Catwoman", "Joker")
+
+            // simple custom mapper
+            val villainAsMap =
+                ds.connection.use {
+                    it.querySingle<Map<String, *>>(
+                        "SELECT * FROM villains WHERE name = :name",
+                        { resultSet, fields ->
+                            mapOf(
+                                "id" to resultSet.getString("id"),
+                                "name" to resultSet.getString("name"),
+                            )
+                        },
+                        "name" to "Joker",
+                    )
+                }
+            villainAsMap.shouldNotBeNull()
+            villainAsMap["id"].shouldBe(joker.id.toString())
+            villainAsMap["name"].shouldBe(joker.name)
 
             // example of complex query and custom mapper
             val popularMovies = repo.findPopularMovies()
