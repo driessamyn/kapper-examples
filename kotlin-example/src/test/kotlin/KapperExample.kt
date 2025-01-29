@@ -23,7 +23,7 @@ class KapperExample : DbBase() {
     @MethodSource("databaseContainers")
     fun example(container: JdbcDatabaseContainer<*>) {
         container.isRunning.shouldBeTrue()
-        getDataSource(container).use { ds ->
+        getDataSource(container).also { ds ->
             val repo = SuperHeroRepository(ds)
             repo.list().shouldBeEmpty()
 

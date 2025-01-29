@@ -21,13 +21,16 @@ repositories {
 }
 
 dependencies {
-//    implementation("net.samyn:kapper:0.2.0-SNAPSHOT")
-    implementation("net.samyn:kapper:1.0.0")
+    implementation("net.samyn:kapper:1.1.0-SNAPSHOT")
+    // coroutine support
+    implementation("net.samyn:kapper-coroutines:1.1.0-SNAPSHOT")
+    implementation(libs.kotlinx.coroutines.core)
     // alternatives
     //  hibernate
     implementation(libs.bundles.hibernate)
     //  ktorm
     implementation(libs.bundles.ktorm)
+    // test
     testImplementation(libs.bundles.test)
     testImplementation(libs.hikari)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

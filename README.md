@@ -253,6 +253,15 @@ val movies = ds.connection.use { conn ->
         }
 ```
 
+## Coroutine support
+
+Kapper supports coroutines with the inclusion of the `kapper-coroutines` module:
+
+```kotlin
+dependencies {
+    implementation("net.samyn:kapper-coroutines:1.0.0")
+}
+```  
 
 ## Testing
 
@@ -289,6 +298,57 @@ class SuperHeroRepositoryTest {
     }
 }
 ```
+
+This module provides an extension function `withConnection` on the `DataSource` object, optionally allowing you to specify a `Dispatcher`.
+If no `Dispatcher` is provided, the default `Dispatchers.IO` is used.
+
+For example:
+
+```kotlin
+suspend fun listHeroes(): List<SuperHero> =
+    dataSource.withConnection {
+        // Kapper query runs on Dispatchers.IO
+        it.query<SuperHero>("SELECT * FROM super_heroes")
+    }
+```  
+
+Using the function above like so:
+
+```kotlin
+runBlocking {
+    val insertJob =
+        async {
+            println("[${Thread.currentThread().name}] Starting to select heroes.")
+            val heroes = service.listSlowly()
+            println("\n[${Thread.currentThread().name}] Finished selecting heroes")
+            heroes
+        }
+    val logJob =
+        launch {
+            // print . until the insertJob has completed.
+            println("[${Thread.currentThread().name}] ")
+            while (insertJob.isActive) {
+                delay(100)
+                print(".")
+            }
+        }
+    println("Selected ${insertJob.await().joinToString { it.name }}")
+    logJob.join()
+    sb.toString()
+}
+```
+
+Would output, for example:
+
+```text
+[Test worker @coroutine#5] Starting to select heroes.
+[Test worker @coroutine#6] ...........
+[Test worker @coroutine#5] Finished selecting heroes
+Selected Superman - 0, Superman - 1, Superman - 2, Superman - 3, Superman - 4, Superman - 5, ...
+.
+```
+
+See [NonBlockingExampleTest](./kotlin-example/src/main/kotlin/net/samyn/kapper/example/kotlin/kapper/NonBlockingSuperHeroService.kt) and [CoroutineExample](./kotlin-example/src/test/kotlin/CoroutineExample.kt) for more examples.
 
 ## Comparison with ORMs
 

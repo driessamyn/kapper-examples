@@ -1,5 +1,6 @@
 import com.zaxxer.hikari.HikariDataSource
 import net.samyn.kapper.execute
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.TestInstance
@@ -10,6 +11,8 @@ import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
+import javax.sql.DataSource
 
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -37,13 +40,19 @@ abstract class DbBase {
             )
     }
 
-    val dbScripts = System.getProperty("db-migrations") ?: "../db"
+    private val dbScripts = System.getProperty("db-migrations") ?: "../db"
+    private val dataSources = ConcurrentHashMap<String, HikariDataSource>()
 
     @BeforeAll
     fun setup() {
         allContainers.values.forEach { container ->
             setupDatabase(container)
         }
+    }
+
+    @AfterAll
+    fun tearDown() {
+        dataSources.values.forEach { it.close() }
     }
 
     private fun setupDatabase(container: JdbcDatabaseContainer<*>) {
@@ -57,10 +66,12 @@ abstract class DbBase {
     }
 
     // KapperExample using HikariCP, but other pools can be used natively
-    protected fun getDataSource(container: JdbcDatabaseContainer<*>) =
-        HikariDataSource().apply {
-            jdbcUrl = container.jdbcUrl + "?allowMultiQueries=true"
-            username = container.username
-            password = container.password
+    protected fun getDataSource(container: JdbcDatabaseContainer<*>): DataSource =
+        dataSources.computeIfAbsent(container.containerName) {
+            HikariDataSource().apply {
+                jdbcUrl = container.jdbcUrl + "?allowMultiQueries=true"
+                username = container.username
+                password = container.password
+            }
         }
 }
