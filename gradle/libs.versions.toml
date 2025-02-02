@@ -2,6 +2,7 @@
 hikari = "6.2.1"
 junit-jupiter = "5.11.4"
 kotest = "6.0.0.M1"
+kotlinx-coroutines = "1.10.1"
 mysql-driver = "9.1.0"
 postgresql-driver = "42.7.5"
 slf4j = "2.0.16"
@@ -17,6 +18,7 @@ ktorm = "4.1.1"
 hikari = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref="kotlinx-coroutines" }
 mysql-driver = { module = "com.mysql:mysql-connector-j", version.ref = "mysql-driver" }
 postgresql-driver = { module = "org.postgresql:postgresql", version.ref = "postgresql-driver" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4j" }
