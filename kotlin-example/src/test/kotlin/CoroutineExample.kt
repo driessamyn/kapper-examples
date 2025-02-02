@@ -1,10 +1,15 @@
+import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.ints.shouldBeLessThan
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import net.samyn.kapper.coroutines.withConnection
 import net.samyn.kapper.example.kotlin.SuperHero
+import net.samyn.kapper.example.kotlin.Villain
 import net.samyn.kapper.example.kotlin.kapper.NonBlockingSuperHeroService
+import net.samyn.kapper.query
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import java.util.UUID
@@ -62,7 +67,7 @@ class CoroutineExample : DbBase() {
         val log =
             runBlocking {
                 val sb = StringBuilder()
-                val insertJob =
+                val selectJob =
                     async {
                         sb.appendLine("[${Thread.currentThread().name}] Starting to select heroes.")
                         val heroes = service.listSlowly()
@@ -73,12 +78,12 @@ class CoroutineExample : DbBase() {
                     launch {
                         // print . until the insertJob has completed.
                         sb.append("[${Thread.currentThread().name}] ")
-                        while (insertJob.isActive) {
+                        while (selectJob.isActive) {
                             delay(100)
                             sb.append(".")
                         }
                     }
-                sb.appendLine("Selected ${insertJob.await().joinToString { it.name }}")
+                sb.appendLine("Selected ${selectJob.await().joinToString { it.name }}")
                 logJob.join()
                 sb.toString()
             }
@@ -88,6 +93,31 @@ class CoroutineExample : DbBase() {
             val dottedLineIndex = lines.indexOfFirst { it.contains(Regex("\\.+")) }
             val finishedLineIndex = lines.indexOfFirst { it.contains("Finished selecting") }
             dottedLineIndex shouldBeLessThan finishedLineIndex
+        }
+    }
+
+    @Test
+    @Order(3)
+    fun `parallel connections`() {
+        if (!inserted) {
+            `insert heroes`()
+        }
+        runBlocking {
+            val heroes =
+                async {
+                    getDataSource(postgresql).withConnection {
+                        it.query<SuperHero>("SELECT * FROM super_heroes")
+                    }
+                }
+            // this creates a second connection!
+            val villains =
+                async {
+                    getDataSource(postgresql).withConnection {
+                        it.query<Villain>("SELECT * FROM villains")
+                    }
+                }
+            heroes.await().shouldNotBeEmpty()
+            villains.await().shouldBeEmpty()
         }
     }
 }

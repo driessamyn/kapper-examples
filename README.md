@@ -2,6 +2,8 @@
 
 KapperExample usage of the [Kapper](https://github.com/driessamyn/kapper) library.
 
+
+
 ## Overview
 
 This project demonstrates how to use the Kapper library with Kotlin and SQL databases. 
@@ -13,7 +15,7 @@ It includes examples of basic CRUD operations, complex queries, and transaction 
 
 ```kotlin
 dependencies {
-    implementation("net.samyn:kapper:1.0.0")
+    implementation("net.samyn:kapper:1.1.0")
 }
 ```
 
@@ -114,7 +116,7 @@ fun findBattles(superHeroName: String) = dataSource.connection.use {
 
 This example uses a SQL query that has multiple joins and auto-maps the result to the `SuperHeroBattle` data class.
 
-This is an example to illustrate how Kapper does not interfere with the SQL query language and it does not keep a strict mapping between the relational and the object model.
+This is an example to illustrate how Kapper does not interfere with the SQL query language, and it does not keep a strict mapping between the relational and the object model.
 Instead, it simply executes the query that is provided and maps to the object that is specified.
 This avoids needing to learn another language or API to facilitate JOINs, or other complex queries, or wasteful multiple queries and code based joining of data that is often seen when people use ORMs "out the box".
 
@@ -259,9 +261,60 @@ Kapper supports coroutines with the inclusion of the `kapper-coroutines` module:
 
 ```kotlin
 dependencies {
-    implementation("net.samyn:kapper-coroutines:1.0.0")
+    implementation("net.samyn:kapper-coroutines:1.1.0")
 }
 ```  
+
+This module provides an extension function `withConnection` on the `DataSource` object, optionally allowing you to specify a `Dispatcher`.
+If no `Dispatcher` is provided, the default `Dispatchers.IO` is used.
+
+For example:
+
+```kotlin
+suspend fun listHeroes(): List<SuperHero> =
+    dataSource.withConnection {
+        // Kapper query runs on Dispatchers.IO
+        it.query<SuperHero>("SELECT * FROM super_heroes")
+    }
+```  
+
+Using the function above like so:
+
+```kotlin
+runBlocking {
+    val selectJob =
+        async {
+            println("[${Thread.currentThread().name}] Starting to select heroes.")
+            val heroes = it.query<SuperHero>("SELECT * FROM super_heroes")
+            println("\n[${Thread.currentThread().name}] Finished selecting heroes")
+            heroes
+        }
+    val logJob =
+        launch {
+            // print . until the insertJob has completed.
+            println("[${Thread.currentThread().name}] ")
+            while (selectJob.isActive) {
+                delay(100)
+                println(".")
+            }
+        }
+    println("Selected ${selectJob.await().joinToString { it.name }}")
+    logJob.join()
+}
+```
+
+Would output, for example:
+
+```text
+[Test worker @coroutine#5] Starting to select heroes.
+[Test worker @coroutine#6] ...........
+[Test worker @coroutine#5] Finished selecting heroes
+Selected Superman, Batman, Wonder Woman, Spider-Man, Iron Man, Captain America, Thor
+.
+```
+
+See [NonBlockingExampleTest](./kotlin-example/src/main/kotlin/net/samyn/kapper/example/kotlin/kapper/NonBlockingSuperHeroService.kt) and [CoroutineExample](./kotlin-example/src/test/kotlin/CoroutineExample.kt) for more examples.
+
 
 ## Testing
 
@@ -298,57 +351,6 @@ class SuperHeroRepositoryTest {
     }
 }
 ```
-
-This module provides an extension function `withConnection` on the `DataSource` object, optionally allowing you to specify a `Dispatcher`.
-If no `Dispatcher` is provided, the default `Dispatchers.IO` is used.
-
-For example:
-
-```kotlin
-suspend fun listHeroes(): List<SuperHero> =
-    dataSource.withConnection {
-        // Kapper query runs on Dispatchers.IO
-        it.query<SuperHero>("SELECT * FROM super_heroes")
-    }
-```  
-
-Using the function above like so:
-
-```kotlin
-runBlocking {
-    val insertJob =
-        async {
-            println("[${Thread.currentThread().name}] Starting to select heroes.")
-            val heroes = service.listSlowly()
-            println("\n[${Thread.currentThread().name}] Finished selecting heroes")
-            heroes
-        }
-    val logJob =
-        launch {
-            // print . until the insertJob has completed.
-            println("[${Thread.currentThread().name}] ")
-            while (insertJob.isActive) {
-                delay(100)
-                print(".")
-            }
-        }
-    println("Selected ${insertJob.await().joinToString { it.name }}")
-    logJob.join()
-    sb.toString()
-}
-```
-
-Would output, for example:
-
-```text
-[Test worker @coroutine#5] Starting to select heroes.
-[Test worker @coroutine#6] ...........
-[Test worker @coroutine#5] Finished selecting heroes
-Selected Superman - 0, Superman - 1, Superman - 2, Superman - 3, Superman - 4, Superman - 5, ...
-.
-```
-
-See [NonBlockingExampleTest](./kotlin-example/src/main/kotlin/net/samyn/kapper/example/kotlin/kapper/NonBlockingSuperHeroService.kt) and [CoroutineExample](./kotlin-example/src/test/kotlin/CoroutineExample.kt) for more examples.
 
 ## Comparison with ORMs
 
