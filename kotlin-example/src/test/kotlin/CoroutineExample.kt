@@ -10,31 +10,25 @@ import net.samyn.kapper.example.kotlin.SuperHero
 import net.samyn.kapper.example.kotlin.Villain
 import net.samyn.kapper.example.kotlin.kapper.NonBlockingSuperHeroService
 import net.samyn.kapper.query
-import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class CoroutineExample : DbBase() {
-    private val heroes =
-        (0..100).map {
-            SuperHero(UUID.randomUUID(), "Superman - $it", "super-$it@dc.com", 85)
-        }
-
     private val service by lazy { NonBlockingSuperHeroService(getDataSource(postgresql)) }
 
-    // this is a bit naughty
-    var inserted = false
-
     @Test
-    @Order(1)
     fun `insert heroes`() {
+        val heroes =
+            (0..100).map {
+                SuperHero(UUID.randomUUID(), "Superman - $it", "super-$it@dc.com", 85)
+            }
         val log =
             runBlocking {
                 val sb = StringBuilder()
                 val insertJob =
                     launch {
                         sb.appendLine("[${Thread.currentThread().name}] Starting to insert ${heroes.size} heroes.")
-                        service.insertSlowly(heroes).also { inserted = true }
+                        service.insertSlowly(heroes)
                         sb.appendLine("\n[${Thread.currentThread().name}] Finished inserting ${heroes.size} heroes")
                     }
                 val logJob =
@@ -59,11 +53,8 @@ class CoroutineExample : DbBase() {
     }
 
     @Test
-    @Order(2)
     fun `select heroes`() {
-        if (!inserted) {
-            `insert heroes`()
-        }
+        insertHeroes()
         val log =
             runBlocking {
                 val sb = StringBuilder()
@@ -97,11 +88,8 @@ class CoroutineExample : DbBase() {
     }
 
     @Test
-    @Order(3)
     fun `parallel connections`() {
-        if (!inserted) {
-            `insert heroes`()
-        }
+        insertHeroes()
         runBlocking {
             val heroes =
                 async {
@@ -118,6 +106,16 @@ class CoroutineExample : DbBase() {
                 }
             heroes.await().shouldNotBeEmpty()
             villains.await().shouldBeEmpty()
+        }
+    }
+
+    private fun insertHeroes() {
+        runBlocking {
+            (0..10).map {
+                SuperHero(UUID.randomUUID(), "Batman - $it", "bat-$it@dc.com", 83)
+            }.let {
+                service.insertSlowly(it)
+            }
         }
     }
 }
