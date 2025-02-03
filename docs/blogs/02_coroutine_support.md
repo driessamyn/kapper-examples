@@ -5,8 +5,6 @@ While Kapper 1.0 achieved many of these goals, one obvious gap was the lack of s
 
 ## Using Kapper Coroutines
 
-## Using Kapper Coroutines
-
 The `kapper-coroutines` module is available from [Maven Central](https://central.sonatype.com/artifact/net.samyn/kapper-coroutines/versions) and adds support for coroutines to Kapper.
 
 At its core, Kapper coroutines are supported by a single extension function: `withConnection` on the `DataSource` object.
@@ -208,7 +206,7 @@ There are a few important things to note when doing this:
 Database connections are a relatively expensive resource, so it is important to ensure that they are used efficiently.
 - Database transactions are tied to a connection, so if you need to execute multiple queries within a transaction, they have to use the same connection, and in Kapper that means the same coroutine.
 
-# Conclusion
+## Conclusion
 
 Kapper 1.1 adds support for Kotlin Coroutines, making it easier to use Kapper in a coroutine-based application.
 This integration brings several key benefits:
