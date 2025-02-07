@@ -38,7 +38,7 @@ ktorm-mysql = { module = "org.ktorm:ktorm-support-mysql", version.ref = "ktorm" 
 ktorm-postgresql = { module = "org.ktorm:ktorm-support-postgresql", version.ref = "ktorm" }
 
 [plugins]
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.0.21" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.1.10" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "12.1.2" }
 
 [bundles]
