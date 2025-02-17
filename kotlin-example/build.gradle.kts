@@ -21,9 +21,9 @@ repositories {
 }
 
 dependencies {
-    implementation("net.samyn:kapper:1.2.0")
+    implementation("net.samyn:kapper:1.2.1")
     // coroutine support
-    implementation("net.samyn:kapper-coroutines:1.2.0")
+    implementation("net.samyn:kapper-coroutines:1.2.1")
     implementation(libs.kotlinx.coroutines.core)
     // alternatives
     //  hibernate
