@@ -32,4 +32,8 @@ replay_pid*
 build
 .qodo
 
+# Ignore IntelliJ project files
 .idea/
+
+# SonarQube
+.scannerwork/
