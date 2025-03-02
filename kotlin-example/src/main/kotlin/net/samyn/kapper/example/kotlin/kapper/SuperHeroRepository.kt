@@ -7,7 +7,7 @@ import net.samyn.kapper.example.kotlin.Villain
 import net.samyn.kapper.execute
 import net.samyn.kapper.query
 import net.samyn.kapper.querySingle
-import java.sql.SQLException
+import net.samyn.kapper.withTransaction
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.sql.DataSource
@@ -89,9 +89,7 @@ class SuperHeroRepository(private val dataSource: DataSource) {
         superHero: SuperHero,
         villain: Villain,
         date: LocalDateTime,
-    ) = dataSource.connection.use {
-        try {
-            it.autoCommit = false
+    ) = dataSource.withTransaction {
             it.execute(
                 """
                 INSERT INTO super_heroes(id, name, email, age) 
@@ -121,11 +119,6 @@ class SuperHeroRepository(private val dataSource: DataSource) {
                 "villain_id" to villain.id,
                 "date" to date,
             )
-            it.commit()
-        } catch (ex: SQLException) {
-            it.rollback()
-            throw ex
-        }
     }
 
     fun findPopularMovies(): List<PopularMovie> =
