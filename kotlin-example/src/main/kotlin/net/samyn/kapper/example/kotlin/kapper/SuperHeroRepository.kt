@@ -7,7 +7,7 @@ import net.samyn.kapper.example.kotlin.Villain
 import net.samyn.kapper.execute
 import net.samyn.kapper.query
 import net.samyn.kapper.querySingle
-import java.sql.SQLException
+import net.samyn.kapper.withTransaction
 import java.time.LocalDateTime
 import java.util.UUID
 import javax.sql.DataSource
@@ -89,43 +89,36 @@ class SuperHeroRepository(private val dataSource: DataSource) {
         superHero: SuperHero,
         villain: Villain,
         date: LocalDateTime,
-    ) = dataSource.connection.use {
-        try {
-            it.autoCommit = false
-            it.execute(
-                """
-                INSERT INTO super_heroes(id, name, email, age) 
-                VALUES (:id, :name, :email, :age)
-                ${ignoreConflict("id")}
-                """.trimIndent(),
-                "id" to superHero.id,
-                "name" to superHero.name,
-                "email" to superHero.email,
-                "age" to superHero.age,
-            )
-            it.execute(
-                """
-                INSERT INTO villains(id, name) 
-                VALUES (:id, :name)
-                ${ignoreConflict("id")}
-                """.trimIndent(),
-                "id" to villain.id,
-                "name" to villain.name,
-            )
-            it.execute(
-                """
-                INSERT INTO battles(super_hero_id, villain_id, battle_date, updated_ts)
-                VALUES (:super_hero_id, :villain_id, :date, NOW())
-                """.trimIndent(),
-                "super_hero_id" to superHero.id,
-                "villain_id" to villain.id,
-                "date" to date,
-            )
-            it.commit()
-        } catch (ex: SQLException) {
-            it.rollback()
-            throw ex
-        }
+    ) = dataSource.withTransaction {
+        it.execute(
+            """
+            INSERT INTO super_heroes(id, name, email, age) 
+            VALUES (:id, :name, :email, :age)
+            ${ignoreConflict("id")}
+            """.trimIndent(),
+            "id" to superHero.id,
+            "name" to superHero.name,
+            "email" to superHero.email,
+            "age" to superHero.age,
+        )
+        it.execute(
+            """
+            INSERT INTO villains(id, name) 
+            VALUES (:id, :name)
+            ${ignoreConflict("id")}
+            """.trimIndent(),
+            "id" to villain.id,
+            "name" to villain.name,
+        )
+        it.execute(
+            """
+            INSERT INTO battles(super_hero_id, villain_id, battle_date, updated_ts)
+            VALUES (:super_hero_id, :villain_id, :date, NOW())
+            """.trimIndent(),
+            "super_hero_id" to superHero.id,
+            "villain_id" to villain.id,
+            "date" to date,
+        )
     }
 
     fun findPopularMovies(): List<PopularMovie> =
