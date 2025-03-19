@@ -151,7 +151,7 @@ class SuperHeroRepository(private val dataSource: DataSource) {
         }
 
     // example of something non-trivial that impacts the Query
-    //  in this case, we want to support both mySQL and postgreSQL in their
+    //  in this case, we want to support both mySQL and PostgreSQL in their
     //  own way of doing an insert and ignoring the duplicate.
     private fun ignoreConflict(updateCol: String) =
         if (DbType.MYSQL == dbType) {
