@@ -1,3 +1,6 @@
+package comparison.hibernate
+
+import DbBase
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainAll

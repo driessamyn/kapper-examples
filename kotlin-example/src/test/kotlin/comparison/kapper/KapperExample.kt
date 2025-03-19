@@ -1,19 +1,24 @@
+package comparison.kapper
+
+import DbBase
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.doubles.shouldBeGreaterThan
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import net.samyn.kapper.example.kotlin.SuperHero
 import net.samyn.kapper.example.kotlin.Villain
-import net.samyn.kapper.example.kotlin.ktorm.SuperHeroRepository
+import net.samyn.kapper.example.kotlin.kapper.SuperHeroRepository
+import net.samyn.kapper.querySingle
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.testcontainers.containers.JdbcDatabaseContainer
 import java.time.LocalDateTime
 import java.util.UUID
 
-class KtormExample : DbBase() {
+class KapperExample : DbBase() {
     val batman = SuperHero(UUID.randomUUID(), "Batman", "batman@dc.com", 85)
     val spiderMan = SuperHero(UUID.randomUUID(), "Spider-man", "spider@marvel.com", 62)
 
@@ -21,7 +26,7 @@ class KtormExample : DbBase() {
     @MethodSource("databaseContainers")
     fun example(container: JdbcDatabaseContainer<*>) {
         container.isRunning.shouldBeTrue()
-        getDataSource(container).let { ds ->
+        getDataSource(container).also { ds ->
             val repo = SuperHeroRepository(ds)
             repo.list().shouldBeEmpty()
 
@@ -62,6 +67,24 @@ class KtormExample : DbBase() {
             val battles = repo.findBattles(batman.name)
             battles.shouldHaveSize(3)
             battles.map { it.villain }.shouldContainAll("Catwoman", "Joker")
+
+            // simple custom mapper
+            val villainAsMap =
+                ds.connection.use {
+                    it.querySingle<Map<String, *>>(
+                        "SELECT * FROM villains WHERE name = :name",
+                        { resultSet, fields ->
+                            mapOf(
+                                "id" to resultSet.getString("id"),
+                                "name" to resultSet.getString("name"),
+                            )
+                        },
+                        "name" to "Joker",
+                    )
+                }
+            villainAsMap.shouldNotBeNull()
+            villainAsMap["id"].shouldBe(joker.id.toString())
+            villainAsMap["name"].shouldBe(joker.name)
 
             // example of complex query and custom mapper
             val popularMovies = repo.findPopularMovies()

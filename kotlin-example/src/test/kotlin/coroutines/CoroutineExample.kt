@@ -1,3 +1,6 @@
+package coroutines
+
+import DbBase
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.ints.shouldBeLessThan
