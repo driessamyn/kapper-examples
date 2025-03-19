@@ -41,7 +41,7 @@ class Execute : DbBase() {
 
     @Test
     @Order(3)
-    fun `delete update`() {
+    fun `execute delete`() {
         getDataSource(postgresql).connection.use {
             it.execute(
                 """
