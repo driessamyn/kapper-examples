@@ -45,7 +45,7 @@ class FlowExample : DbBase() {
                             ).onEach {
                                 acc += it.grossed
                                 println("Accumulated gross including (${it.title}): ${String.format("%,d", acc)}")
-                                if (acc <= 10_000_000_000) {
+                                if (acc >= 10_000_000_000) {
                                     cancel("Gross reached 10 billion")
                                 }
                             }.toList()
