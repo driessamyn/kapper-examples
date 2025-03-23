@@ -44,7 +44,7 @@ abstract class DbBase {
     private val dataSources = ConcurrentHashMap<String, HikariDataSource>()
 
     @BeforeAll
-    fun setup() {
+    open fun setup() {
         allContainers.values.forEach { container ->
             setupDatabase(container)
         }
