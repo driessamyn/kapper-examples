@@ -9,7 +9,7 @@ slf4j = "2.0.17"
 test-conatainers = "1.20.6"
 
 # alternatives
-hibernate-version = "6.6.11.Final"
+hibernate-version = "6.6.12.Final"
 hibernate-validator-version = "8.0.2.Final"
 glassfish-jakarta = "4.0.2"
 ktorm = "4.1.1"
