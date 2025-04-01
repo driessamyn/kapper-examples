@@ -5,7 +5,7 @@ plugins {
     `java-library`
 
     // needed for hibernate!
-    id("org.jetbrains.kotlin.plugin.jpa") version "2.1.10"
+    id("org.jetbrains.kotlin.plugin.jpa") version "2.1.20"
 }
 
 repositories {
