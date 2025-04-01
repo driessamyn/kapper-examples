@@ -1,5 +1,5 @@
 [versions]
-hikari = "6.2.1"
+hikari = "6.3.0"
 junit-jupiter = "5.12.1"
 kotest = "6.0.0.M3"
 kotlinx-coroutines = "1.10.1"
