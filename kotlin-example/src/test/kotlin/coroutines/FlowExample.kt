@@ -1,11 +1,13 @@
 package coroutines
 
 import DbBase
+import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.takeWhile
@@ -13,11 +15,49 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import net.samyn.kapper.coroutines.queryAsFlow
 import net.samyn.kapper.coroutines.withConnection
+import net.samyn.kapper.example.kotlin.SuperHero
+import net.samyn.kapper.execute
 import org.junit.jupiter.api.Test
 import java.util.Date
+import java.util.UUID
+import java.util.stream.IntStream.range
 
 class FlowExample : DbBase() {
     data class PopularMovie(val title: String, val releaseDate: Date, val grossed: Long)
+
+    @Test
+    fun `simple example`() {
+        val datasource = getDataSource(postgresql)
+        insertHeroes(10)
+        runBlocking {
+            val query =
+                datasource.withConnection {
+                    async {
+                        it.queryAsFlow<SuperHero>("SELECT * FROM super_heroes")
+                            .map { it.name }
+                            .toList()
+                    }
+                }
+            println("Starting query")
+            val heroes = query.await()
+            heroes.size shouldBe 10
+            heroes.forEach(::println)
+        }
+    }
+
+    private fun insertHeroes(n: Int) {
+        getDataSource(postgresql).connection.use {
+            range(0, n).forEach { i ->
+                it.execute(
+                    "INSERT INTO super_heroes (id, name, email, age) VALUES (:id, :name, :email, :age)",
+                    "id" to UUID.randomUUID(),
+                    "name" to "Superman $i",
+                    "email" to "superman$i@d.com",
+                    "age" to (40..99).random(),
+                )
+            }
+        }
+    }
 
     @Test
     fun `cancel query`() {
