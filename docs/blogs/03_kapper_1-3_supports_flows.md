@@ -14,7 +14,7 @@ This makes them a perfect addition to [Kapper's existing coroutine support](http
 
 As always with Kapper, the new API is simple and idiomatic to Kotlin and is provided as an extension function rather than a leaky abstraction which you may find in other libraries.
 
-To make use of the new API, simply call the `queryAsFlow` extension function on a JDBC `Connecton` instance.
+To make use of the new API, simply call the `queryAsFlow` extension function on a JDBC `Connection` instance.
 The `queryAsFlow` function takes the same arguments as the _regular_, blocking, `query` function, but instead returns a `Flow` of the query results.
 
 ### Example: Basic Flow Query
