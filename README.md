@@ -15,7 +15,7 @@ It includes examples of basic CRUD operations, complex queries, and transaction 
 
 ```kotlin
 dependencies {
-    implementation("net.samyn:kapper:1.1.0")
+    implementation("net.samyn:kapper:<version>")
 }
 ```
 
