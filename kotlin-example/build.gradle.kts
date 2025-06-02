@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.samyn:kapper-coroutines:1.4.0")
+    implementation("net.samyn:kapper-coroutines:1.5.0")
     implementation(libs.kotlinx.coroutines.core)
     // alternatives
     //  hibernate
