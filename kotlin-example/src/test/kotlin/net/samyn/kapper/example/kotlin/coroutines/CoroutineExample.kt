@@ -1,6 +1,5 @@
-package coroutines
+package net.samyn.kapper.example.kotlin.coroutines
 
-import DbBase
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.ints.shouldBeLessThan
@@ -9,6 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.samyn.kapper.coroutines.withConnection
+import net.samyn.kapper.example.kotlin.DbBase
 import net.samyn.kapper.example.kotlin.SuperHero
 import net.samyn.kapper.example.kotlin.Villain
 import net.samyn.kapper.example.kotlin.kapper.NonBlockingSuperHeroService
