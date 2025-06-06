@@ -1,3 +1,5 @@
+package net.samyn.kapper.example.kotlin
+
 import com.zaxxer.hikari.HikariDataSource
 import net.samyn.kapper.execute
 import org.junit.jupiter.api.AfterAll
@@ -18,6 +20,7 @@ import javax.sql.DataSource
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class DbBase {
     companion object {
+        @JvmStatic
         @Container
         val postgresql = PostgreSQLContainer("postgres:16")
 

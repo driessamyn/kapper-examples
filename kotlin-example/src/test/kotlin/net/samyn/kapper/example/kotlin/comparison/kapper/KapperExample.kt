@@ -1,6 +1,5 @@
-package comparison.kapper
+package net.samyn.kapper.example.kotlin.comparison.kapper
 
-import DbBase
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainAll
@@ -8,6 +7,7 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.doubles.shouldBeGreaterThan
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import net.samyn.kapper.example.kotlin.DbBase
 import net.samyn.kapper.example.kotlin.SuperHero
 import net.samyn.kapper.example.kotlin.Villain
 import net.samyn.kapper.example.kotlin.kapper.SuperHeroRepository
