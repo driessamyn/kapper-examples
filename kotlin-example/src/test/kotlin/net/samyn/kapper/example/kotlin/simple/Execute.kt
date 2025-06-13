@@ -1,6 +1,6 @@
-package simple
+package net.samyn.kapper.example.kotlin.simple
 
-import DbBase
+import net.samyn.kapper.example.kotlin.DbBase
 import net.samyn.kapper.execute
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test

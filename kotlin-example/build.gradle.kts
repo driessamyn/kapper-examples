@@ -21,7 +21,8 @@ repositories {
 }
 
 dependencies {
-    implementation("net.samyn:kapper-coroutines:1.4.0")
+    implementation("net.samyn:kapper:1.5.0") // core kapper library
+    implementation("net.samyn:kapper-coroutines:1.5.0") // only needed for coroutines support
     implementation(libs.kotlinx.coroutines.core)
     // alternatives
     //  hibernate
@@ -39,6 +40,29 @@ dependencies {
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            setSrcDirs(
+                listOf(
+                    "src/main/java",
+                    "src/main/kotlin",
+                ),
+            )
+        }
+    }
+    test {
+        java {
+            setSrcDirs(
+                listOf(
+                    "src/test/java",
+                    "src/test/kotlin",
+                ),
+            )
+        }
     }
 }
 

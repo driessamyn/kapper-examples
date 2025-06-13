@@ -1,6 +1,5 @@
-package coroutines
+package net.samyn.kapper.example.kotlin.coroutines
 
-import DbBase
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
@@ -15,6 +14,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import net.samyn.kapper.coroutines.queryAsFlow
 import net.samyn.kapper.coroutines.withConnection
+import net.samyn.kapper.example.kotlin.DbBase
 import net.samyn.kapper.example.kotlin.SuperHero
 import net.samyn.kapper.execute
 import org.junit.jupiter.api.Test
