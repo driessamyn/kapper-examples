@@ -70,9 +70,11 @@ Separate scripts are provided for [PostgreSQL](./db/postgresql.sql) and [MySQL](
 
 ## Examples
 
+### Kotlin
+
 [SuperHeroRepository.kt](./src/main/kotlin/net/samyn/kapper/example/kotlin/SuperHeroRepository.kt) has an example repository class using the kapper API:
 
-### Simple SELECT query
+#### Simple SELECT query
 
 ```kotlin
 fun list(): List<SuperHero> = dataSource.connection.use {
@@ -82,7 +84,7 @@ fun list(): List<SuperHero> = dataSource.connection.use {
 
 Executes a simple SELECT query on the `super_heroes` table and maps the results to the `SuperHero` data class.
 
-### Find by ID
+#### Find by ID
 
 ```kotlin
 fun findById(id: UUID) = dataSource.connection.use {
@@ -98,7 +100,7 @@ fun findByName(name: String) = dataSource.connection.use {
 
 The above examples select a single row by using the ID or name and also automatically maps to the `SuperHero` class.
 
-### Join query
+#### Join query
 
 ```kotlin
 fun findBattles(superHeroName: String) = dataSource.connection.use {
@@ -123,7 +125,7 @@ This avoids needing to learn another language or API to facilitate JOINs, or oth
 You can also see here how data from the `super_heroes` table is used by multiple data classes.
 Kapper is not opinionated about the mapping between the relational and object model.
 
-### Simple INSERT
+#### Simple INSERT
 
 ```kotlin
 fun insertHero(superHero: SuperHero) = dataSource.connection.use {
@@ -145,7 +147,7 @@ Kapper currently doesn't support passing an object into teh execute function, in
 This makes it very easy to understand the expected behaviour (for example, when ID values are generated in code vs the DB).
 However, if there is sufficient demand, an additional API will be introduced.
 
-### Transactional INSERT (IF NOT EXIST)
+#### Transactional INSERT (IF NOT EXIST)
 
 ```kotlin
 fun insertBattle(
@@ -213,7 +215,7 @@ Because Kapper uses SQL queries are provided, it never needs to "catch up" with 
 Users or Kapper are in complete control.
 This is further illustrated by the example below which uses a complex Window query and custome mapper.
 
-## A more complex example
+#### A more complex example
 
 [KapperExample](./src/test/kotlin/KapperExample.kt) contains an additional, more complex, query, which serves as an example of how complex SQL queries can be used with Kapper without the need for a complex or new API.
 
@@ -255,7 +257,7 @@ val movies = ds.connection.use { conn ->
         }
 ```
 
-## Coroutine support
+#### Coroutine support
 
 Kapper supports coroutines with the inclusion of the `kapper-coroutines` module:
 
@@ -315,6 +317,75 @@ Selected Superman, Batman, Wonder Woman, Spider-Man, Iron Man, Captain America, 
 
 See [NonBlockingExampleTest](./kotlin-example/src/main/kotlin/net/samyn/kapper/example/kotlin/kapper/NonBlockingSuperHeroService.kt) and [CoroutineExample](./kotlin-example/src/test/kotlin/CoroutineExample.kt) for more examples.
 
+### Java Examples
+
+Kapper also supports Java, including auto-mapping to Java records.
+
+See [SuperHeroRepository.java](./kotlin-example/src/main/java/net/samyn/kapper/example/java/SuperHeroRepository.java) for an example repository class using the Kapper API in Java.
+
+Using the following record class:
+
+```java
+public record SuperHeroRecord(UUID id, String name, String email, int age) {}
+```
+
+#### Simple SELECT query
+
+```java
+public List<SuperHeroRecord> list() throws SQLException {
+    try (Connection conn = dataSource.getConnection()) {
+        return  kapper.query(SuperHeroRecord.class, conn, "SELECT * FROM super_heroes", Map.of());
+    }
+}
+```
+
+Executes a simple SELECT query on the `super_heroes` table and maps the results to the `SuperHeroRecord` class.
+
+#### Find by ID
+
+```java
+public SuperHeroRecord findById(UUID id) throws SQLException {
+    try (Connection conn = dataSource.getConnection()) {
+        return kapper.querySingle(SuperHeroRecord.class, conn, "SELECT * FROM super_heroes WHERE id = :id", Map.of("id", id));
+    }
+}
+
+public SuperHeroRecord findByName(String name) throws SQLException {
+    try (Connection conn = dataSource.getConnection()) {
+        return kapper.querySingle(SuperHeroRecord.class, conn, "SELECT * FROM super_heroes WHERE name = :name", Map.of("name", name));
+    }
+}
+```
+
+The above examples select a single row by using the ID or name and also automatically maps to the `SuperHeroRecord` class.
+
+#### Join query
+
+```java
+public List<SuperHeroBattleRecord> findBattles(String superHeroName) throws SQLException {
+    try (Connection conn = dataSource.getConnection()) {
+        return kapper.query(SuperHeroBattleRecord.class,
+                conn,
+                """
+                        SELECT s.name as superhero, v.name as villain, b.battle_date as date
+                        FROM super_heroes as s
+                        INNER JOIN battles as b on s.id = b.super_hero_id
+                        INNER JOIN villains as v on v.id = b.villain_id
+                        WHERE s.name = :name
+                        """,
+                Map.of("name", superHeroName)
+        );
+    }
+}
+```
+
+This example uses a SQL query that has multiple joins and auto-maps the result to the `SuperHeroBattleRecord` class.
+
+This is an example to illustrate how Kapper does not interfere with the SQL query language, and it does not keep a strict mapping between the relational and the object model.
+Instead, it simply executes the query that is provided and maps to the object that is specified.
+This avoids needing to learn another language or API to facilitate JOINs, or other complex queries, or wasteful multiple queries and code based joining of data that is often seen when people use ORMs "out the box".
+
+You can also see here how data from the super_heroes table is used by multiple data classes. Kapper is not opinionated about the mapping between the relational and object model.
 
 ## Testing
 
