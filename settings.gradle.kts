@@ -1,6 +1,4 @@
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
-}
-
 rootProject.name = "kapper-examples"
 include("kotlin-example")
+include("java-example")
+

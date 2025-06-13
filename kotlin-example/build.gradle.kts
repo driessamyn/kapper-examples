@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.ktlint)
 
     `java-library`
+    `java-test-fixtures`
 
     // needed for hibernate!
     id("org.jetbrains.kotlin.plugin.jpa") version "2.1.21"
@@ -21,8 +22,8 @@ repositories {
 }
 
 dependencies {
-    implementation("net.samyn:kapper:1.5.0") // core kapper library
-    implementation("net.samyn:kapper-coroutines:1.5.0") // only needed for coroutines support
+    implementation(libs.kapper) // core kapper library
+    implementation(libs.kapper.coroutines) // only needed for coroutines support
     implementation(libs.kotlinx.coroutines.core)
     // alternatives
     //  hibernate
@@ -35,6 +36,10 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly(libs.bundles.dbs)
     testRuntimeOnly(libs.slf4j.simple)
+
+    testFixturesImplementation(libs.kapper)
+    testFixturesImplementation(libs.bundles.test)
+    testFixturesImplementation(libs.hikari)
 }
 
 java {
@@ -43,28 +48,28 @@ java {
     }
 }
 
-sourceSets {
-    main {
-        java {
-            setSrcDirs(
-                listOf(
-                    "src/main/java",
-                    "src/main/kotlin",
-                ),
-            )
-        }
-    }
-    test {
-        java {
-            setSrcDirs(
-                listOf(
-                    "src/test/java",
-                    "src/test/kotlin",
-                ),
-            )
-        }
-    }
-}
+// sourceSets {
+//    main {
+//        java {
+//            setSrcDirs(
+//                listOf(
+//                    "src/main/java",
+//                    "src/main/kotlin",
+//                ),
+//            )
+//        }
+//    }
+//    test {
+//        java {
+//            setSrcDirs(
+//                listOf(
+//                    "src/test/java",
+//                    "src/test/kotlin",
+//                ),
+//            )
+//        }
+//    }
+// }
 
 tasks.check {
     dependsOn(tasks.ktlintCheck)
