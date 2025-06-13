@@ -72,6 +72,8 @@ Separate scripts are provided for [PostgreSQL](./db/postgresql.sql) and [MySQL](
 
 ### Kotlin
 
+[kotlin-example](./kotlin-example) contains Kotlin examples using Kapper.
+
 [SuperHeroRepository.kt](./src/main/kotlin/net/samyn/kapper/example/kotlin/SuperHeroRepository.kt) has an example repository class using the kapper API:
 
 #### Simple SELECT query
@@ -213,11 +215,11 @@ In PostgreSQL, this is supported by the `ON CONFLICT DO NOTHING` hint and in myS
 
 Because Kapper uses SQL queries are provided, it never needs to "catch up" with specific DB features.
 Users or Kapper are in complete control.
-This is further illustrated by the example below which uses a complex Window query and custome mapper.
+This is further illustrated by the example below which uses a complex Window query and custom mapper.
 
 #### A more complex example
 
-[KapperExample](./src/test/kotlin/KapperExample.kt) contains an additional, more complex, query, which serves as an example of how complex SQL queries can be used with Kapper without the need for a complex or new API.
+[SuperHeroRepository](./kotlin-example/src/main/kotlin/net/samyn/kapper/example/kotlin/kapper/SuperHeroRepository.kt) contains an additional, more complex, query, which serves as an example of how complex SQL queries can be used with Kapper without the need for a complex or new API.
 
 In this example, we use a Window function to calculate averages for a year, and map this to a new `PopularMovie` data class.
 
@@ -226,6 +228,7 @@ data class PopularMovie(
     val title: String,
     val grossed: Long,
     val comparedToAnnualAverage: Double)
+
 val movies = ds.connection.use { conn ->
         conn.query("""
             SELECT 
@@ -263,7 +266,7 @@ Kapper supports coroutines with the inclusion of the `kapper-coroutines` module:
 
 ```kotlin
 dependencies {
-    implementation("net.samyn:kapper-coroutines:1.1.0")
+    implementation("net.samyn:kapper-coroutines:<version>")
 }
 ```  
 
@@ -321,7 +324,9 @@ See [NonBlockingExampleTest](./kotlin-example/src/main/kotlin/net/samyn/kapper/e
 
 Kapper also supports Java, including auto-mapping to Java records.
 
-See [SuperHeroRepository.java](./kotlin-example/src/main/java/net/samyn/kapper/example/java/SuperHeroRepository.java) for an example repository class using the Kapper API in Java.
+[java-example](./java-example) contains Java examples using Kapper.
+
+See [SuperHeroRepository.java](./java-example/src/main/java/net/samyn/kapper/example/java/kapper/SuperHeroRecordRepository.java) for an example repository class using the Kapper API in Java.
 
 Using the following record class:
 

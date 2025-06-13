@@ -8,7 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.samyn.kapper.coroutines.withConnection
-import net.samyn.kapper.example.kotlin.DbBase
+import net.samyn.kapper.example.DbBase
 import net.samyn.kapper.example.kotlin.SuperHero
 import net.samyn.kapper.example.kotlin.Villain
 import net.samyn.kapper.example.kotlin.kapper.NonBlockingSuperHeroService

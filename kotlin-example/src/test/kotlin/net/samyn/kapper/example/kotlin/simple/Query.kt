@@ -2,7 +2,7 @@ package net.samyn.kapper.example.kotlin.simple
 
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.nulls.shouldNotBeNull
-import net.samyn.kapper.example.kotlin.DbBase
+import net.samyn.kapper.example.DbBase
 import net.samyn.kapper.example.kotlin.SuperHero
 import net.samyn.kapper.query
 import net.samyn.kapper.querySingle

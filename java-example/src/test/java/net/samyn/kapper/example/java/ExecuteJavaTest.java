@@ -1,9 +1,9 @@
-package net.samyn.kapper.example.java.simple;
+package net.samyn.kapper.example.java;
 
 import net.samyn.kapper.Kapper;
 import net.samyn.kapper.example.java.kapper.SuperHeroRecord;
 import net.samyn.kapper.example.java.kapper.SuperHeroRecordRepository;
-import net.samyn.kapper.example.kotlin.DbBase;
+import net.samyn.kapper.example.DbBase;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

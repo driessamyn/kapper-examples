@@ -6,3 +6,4 @@ public record PopularMovieRecord(
         double comparedToAnnualAverage,
         int allTimeRanking
 ) {}
+

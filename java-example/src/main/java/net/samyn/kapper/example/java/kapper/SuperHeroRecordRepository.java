@@ -1,8 +1,6 @@
 package net.samyn.kapper.example.java.kapper;
 
 import net.samyn.kapper.Kapper;
-import net.samyn.kapper.example.kotlin.SuperHeroBattle;
-
 
 import javax.sql.DataSource;
 import java.sql.Connection;
