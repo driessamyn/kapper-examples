@@ -1,13 +1,9 @@
 plugins {
-    alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.ktlint)
-
-    `java-library`
-    `java-test-fixtures`
-
-    // needed for hibernate!
-    id("org.jetbrains.kotlin.plugin.jpa") version "2.1.21"
+    id("java")
 }
+
+group = "net.samyn.kapper.example"
+version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -23,37 +19,19 @@ repositories {
 
 dependencies {
     implementation(libs.kapper) // core kapper library
-    implementation(libs.kapper.coroutines) // only needed for coroutines support
-    implementation(libs.kotlinx.coroutines.core)
-    // alternatives
-    //  hibernate
-    implementation(libs.bundles.hibernate)
-    //  ktorm
-    implementation(libs.bundles.ktorm)
-    // test
+
     testImplementation(libs.bundles.test)
-    testImplementation(libs.hikari)
+    testImplementation(testFixtures(project(":kotlin-example")))
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly(libs.bundles.dbs)
     testRuntimeOnly(libs.slf4j.simple)
-
-    testFixturesImplementation(libs.kapper)
-    testFixturesImplementation(libs.bundles.test)
-    testFixturesImplementation(libs.hikari)
 }
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
-}
-
-tasks.check {
-    dependsOn(tasks.ktlintCheck)
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    dependsOn(tasks.ktlintFormat)
 }
 
 tasks.named<Test>("test") {

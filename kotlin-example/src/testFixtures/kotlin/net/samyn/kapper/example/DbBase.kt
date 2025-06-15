@@ -1,4 +1,4 @@
-package net.samyn.kapper.example.kotlin
+package net.samyn.kapper.example
 
 import com.zaxxer.hikari.HikariDataSource
 import net.samyn.kapper.execute
