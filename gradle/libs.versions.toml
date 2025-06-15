@@ -10,7 +10,7 @@ test-conatainers = "1.21.0"
 
 # alternatives
 hibernate-version = "6.6.15.Final"
-hibernate-validator-version = "8.0.2.Final"
+hibernate-validator-version = "9.0.1.Final"
 glassfish-jakarta = "4.0.2"
 ktorm = "4.1.1"
 
