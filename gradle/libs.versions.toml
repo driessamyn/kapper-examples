@@ -9,7 +9,7 @@ kotlinx-coroutines = "1.10.2"
 mysql-driver = "9.3.0"
 postgresql-driver = "42.7.7"
 slf4j = "2.0.17"
-test-conatainers = "1.21.0"
+test-conatainers = "1.21.1"
 
 # alternatives
 hibernate-version = "7.0.2.Final"
