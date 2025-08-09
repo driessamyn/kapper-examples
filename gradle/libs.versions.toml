@@ -1,6 +1,6 @@
 [versions]
 
-kapper = "1.5.0"
+kapper = "1.6.0"
 
 hikari = "6.3.0"
 junit-jupiter = "5.13.3"
