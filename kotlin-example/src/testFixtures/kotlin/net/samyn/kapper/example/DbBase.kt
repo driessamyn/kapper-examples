@@ -60,8 +60,10 @@ abstract class DbBase {
 
     private fun setupDatabase(container: JdbcDatabaseContainer<*>) {
         val schemaFile =
-            Path.of(dbScripts)
-                .resolve(initScripts[container::class.java]!!).toFile()
+            Path
+                .of(dbScripts)
+                .resolve(initScripts[container::class.java]!!)
+                .toFile()
         getDataSource(container).connection.use { connection ->
             // initialising the DB the primitive way.
             connection.execute(schemaFile.readText())

@@ -114,11 +114,12 @@ class CoroutineExample : DbBase() {
 
     private fun insertHeroes() {
         runBlocking {
-            (0..10).map {
-                SuperHero(UUID.randomUUID(), "Batman - $it", "bat-$it@dc.com", 83)
-            }.let {
-                service.insertSlowly(it)
-            }
+            (0..10)
+                .map {
+                    SuperHero(UUID.randomUUID(), "Batman - $it", "bat-$it@dc.com", 83)
+                }.let {
+                    service.insertSlowly(it)
+                }
         }
     }
 }

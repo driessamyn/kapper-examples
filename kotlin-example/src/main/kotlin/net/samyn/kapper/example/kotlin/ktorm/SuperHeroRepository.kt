@@ -33,7 +33,9 @@ import javax.sql.DataSource
 import org.ktorm.support.mysql.insertOrUpdate as mySqlInsertOrUpdate
 import org.ktorm.support.postgresql.insertOrUpdate as postgresqlInsertOrUpdate
 
-class SuperHeroRepository(private val dataSource: DataSource) {
+class SuperHeroRepository(
+    private val dataSource: DataSource,
+) {
     private val database: Database
     private val dbType: DbType
 
@@ -80,17 +82,18 @@ class SuperHeroRepository(private val dataSource: DataSource) {
         override fun doGetResult(
             rs: ResultSet,
             index: Int,
-        ): UUID? {
-            return if (dbType == DbType.MYSQL) {
+        ): UUID? =
+            if (dbType == DbType.MYSQL) {
                 UUID.fromString(rs.getString(index))
             } else {
                 rs.getObject(index) as UUID?
             }
-        }
     }
 
     // mappings
-    class SuperheroesTable(dbType: DbType) : Table<Nothing>("super_heroes") {
+    class SuperheroesTable(
+        dbType: DbType,
+    ) : Table<Nothing>("super_heroes") {
         val id = registerColumn("id", CustomUUIDSqlType(dbType)).primaryKey()
         val name = varchar("name")
         val email = varchar("email")
@@ -107,14 +110,18 @@ class SuperHeroRepository(private val dataSource: DataSource) {
 
     private val superHeroes = SuperheroesTable(dbType)
 
-    class VillainsTable(dbType: DbType) : Table<Nothing>("villains") {
+    class VillainsTable(
+        dbType: DbType,
+    ) : Table<Nothing>("villains") {
         val id = registerColumn("id", CustomUUIDSqlType(dbType)).primaryKey()
         val name = varchar("name")
     }
 
     private val villains = VillainsTable(dbType)
 
-    class Battles(dbType: DbType) : Table<Nothing>("battles") {
+    class Battles(
+        dbType: DbType,
+    ) : Table<Nothing>("battles") {
         val superHeroId = registerColumn("super_hero_id", CustomUUIDSqlType(dbType)).primaryKey()
         val villainId = registerColumn("villain_id", CustomUUIDSqlType(dbType)).primaryKey()
         val battleDate = datetime("battle_date")
@@ -251,33 +258,34 @@ class SuperHeroRepository(private val dataSource: DataSource) {
 //            }
         database.useConnection { connection ->
             // falling back on native JDBC (or we could have used Kapper ;) )
-            connection.prepareStatement(
-                """
-                 SELECT
-                 title,
-                 release_date, 
-                 gross_worldwide, 
-                 AVG(gross_worldwide) OVER() AS total_average_gross,
-                 AVG(gross_worldwide) OVER(PARTITION BY EXTRACT(YEAR FROM release_date)) AS average_annual_gross
-                FROM movies 
-                ORDER BY gross_worldwide DESC
-                LIMIT 3
-                """.trimIndent(),
-            ).use { statement ->
-                statement.executeQuery().use { rs ->
-                    val result = mutableListOf<PopularMovie>()
-                    while (rs.next()) {
-                        result.add(
-                            PopularMovie(
-                                rs.getString("title"),
-                                rs.getLong("gross_worldwide"),
-                                rs.getDouble("average_annual_gross"),
-                                rs.getInt("total_average_gross"),
-                            ),
-                        )
+            connection
+                .prepareStatement(
+                    """
+                     SELECT
+                     title,
+                     release_date, 
+                     gross_worldwide, 
+                     AVG(gross_worldwide) OVER() AS total_average_gross,
+                     AVG(gross_worldwide) OVER(PARTITION BY EXTRACT(YEAR FROM release_date)) AS average_annual_gross
+                    FROM movies 
+                    ORDER BY gross_worldwide DESC
+                    LIMIT 3
+                    """.trimIndent(),
+                ).use { statement ->
+                    statement.executeQuery().use { rs ->
+                        val result = mutableListOf<PopularMovie>()
+                        while (rs.next()) {
+                            result.add(
+                                PopularMovie(
+                                    rs.getString("title"),
+                                    rs.getLong("gross_worldwide"),
+                                    rs.getDouble("average_annual_gross"),
+                                    rs.getInt("total_average_gross"),
+                                ),
+                            )
+                        }
+                        result
                     }
-                    result
                 }
-            }
         }
 }

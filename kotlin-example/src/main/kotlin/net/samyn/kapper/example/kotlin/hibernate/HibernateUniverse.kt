@@ -111,13 +111,13 @@ public class SuperHeroHibernateQueries(
             .setProperty(AvailableSettings.JAKARTA_JDBC_USER, jdbcUser)
             .setProperty(AvailableSettings.JAKARTA_JDBC_PASSWORD, jdbcPassword) // Automatic schema export
             .setProperty(AvailableSettings.SHOW_SQL, true)
-            .setProperty(AvailableSettings.FORMAT_SQL, true).also {
+            .setProperty(AvailableSettings.FORMAT_SQL, true)
+            .also {
                 if (jdbcUrl.contains(DbType.MYSQL.name, ignoreCase = true)) {
                     // glad I had Claud AI to help me with this little bit of "magic" :(
                     it.setProperty("hibernate.type.preferred_uuid_jdbc_type", "VARCHAR")
                 }
-            }
-            .buildSessionFactory()
+            }.buildSessionFactory()
 
     fun list(): List<SuperHeroEntity> =
         sessionFactory.openSession().use {
@@ -133,25 +133,25 @@ public class SuperHeroHibernateQueries(
     // Find a superhero by name
     fun findByName(name: String) =
         sessionFactory.openSession().use {
-            it.createSelectionQuery(
-                "FROM SuperHeroEntity WHERE name = :name",
-                SuperHeroEntity::class.java,
-            )
-                .setParameter("name", name)
+            it
+                .createSelectionQuery(
+                    "FROM SuperHeroEntity WHERE name = :name",
+                    SuperHeroEntity::class.java,
+                ).setParameter("name", name)
                 .uniqueResult()
         }
 
     // Find battles involving a specific superhero
     fun findBattles(superHeroName: String) =
         sessionFactory.openSession().use {
-            it.createSelectionQuery(
-                """
+            it
+                .createSelectionQuery(
+                    """
             SELECT b FROM SuperHeroBattleEntity b 
             WHERE b.superHero.name = :name
         """,
-                SuperHeroBattleEntity::class.java,
-            )
-                .setParameter("name", superHeroName)
+                    SuperHeroBattleEntity::class.java,
+                ).setParameter("name", superHeroName)
                 .list()
         }
 
@@ -187,21 +187,22 @@ public class SuperHeroHibernateQueries(
     fun findPopularMovies(): List<PopularMovie> =
         sessionFactory.openSession().use {
             var allTimeRank = 1
-            return it.createNativeQuery(
-                """
-                 SELECT
-                 title,
-                 release_date, 
-                 gross_worldwide, 
-                 AVG(gross_worldwide) OVER() AS total_average_gross,
-                 AVG(gross_worldwide) OVER(PARTITION BY EXTRACT(YEAR FROM release_date)) AS average_annual_gross
-                FROM movies 
-                ORDER BY gross_worldwide DESC
-                LIMIT 3
-                """.trimIndent(),
-                Array<Any>::class.java,
-            )
-                .resultList.map { row ->
+            return it
+                .createNativeQuery(
+                    """
+                     SELECT
+                     title,
+                     release_date, 
+                     gross_worldwide, 
+                     AVG(gross_worldwide) OVER() AS total_average_gross,
+                     AVG(gross_worldwide) OVER(PARTITION BY EXTRACT(YEAR FROM release_date)) AS average_annual_gross
+                    FROM movies 
+                    ORDER BY gross_worldwide DESC
+                    LIMIT 3
+                    """.trimIndent(),
+                    Array<Any>::class.java,
+                ).resultList
+                .map { row ->
                     val result = row as Array<*>
                     PopularMovie(
                         result[0] as String,
