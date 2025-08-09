@@ -12,7 +12,9 @@ import java.time.LocalDateTime
 import java.util.UUID
 import javax.sql.DataSource
 
-class SuperHeroRepository(private val dataSource: DataSource) {
+class SuperHeroRepository(
+    private val dataSource: DataSource,
+) {
     private val dbType: DbType
 
     init {

@@ -46,7 +46,7 @@ ktorm-postgresql = { module = "org.ktorm:ktorm-support-postgresql", version.ref 
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.2.0" }
-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "12.3.0" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "13.0.0" }
 
 [bundles]
 test = [

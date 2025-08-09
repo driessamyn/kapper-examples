@@ -8,7 +8,9 @@ import net.samyn.kapper.withTransaction
 import java.lang.Thread.sleep
 import javax.sql.DataSource
 
-class NonBlockingSuperHeroService(private val dataSource: DataSource) {
+class NonBlockingSuperHeroService(
+    private val dataSource: DataSource,
+) {
     // equivalent of the list function in SuperHeroRepository but using coroutines
     //  a sleep is added to query to illustrate the non-blocking nature of the function
     suspend fun listSlowly(): List<SuperHero> =

@@ -23,7 +23,11 @@ import java.util.UUID
 import java.util.stream.IntStream.range
 
 class FlowExample : DbBase() {
-    data class PopularMovie(val title: String, val releaseDate: Date, val grossed: Long)
+    data class PopularMovie(
+        val title: String,
+        val releaseDate: Date,
+        val grossed: Long,
+    )
 
     @Test
     fun `simple example`() {
@@ -33,7 +37,8 @@ class FlowExample : DbBase() {
             val query =
                 datasource.withConnection {
                     async {
-                        it.queryAsFlow<SuperHero>("SELECT * FROM super_heroes")
+                        it
+                            .queryAsFlow<SuperHero>("SELECT * FROM super_heroes")
                             .map { it.name }
                             .toList()
                     }
@@ -73,22 +78,23 @@ class FlowExample : DbBase() {
                         var acc = 0L
                         delay(50)
                         val movies =
-                            connection.queryAsFlow<PopularMovie>(
-                                """
-                                SELECT
-                                 title,
-                                 release_date as releasedate, 
-                                 gross_worldwide as grossed
-                                FROM movies 
-                                ORDER BY gross_worldwide DESC
-                                """.trimIndent(),
-                            ).onEach {
-                                acc += it.grossed
-                                println("Accumulated gross including (${it.title}): ${String.format("%,d", acc)}")
-                                if (acc >= 10_000_000_000) {
-                                    cancel("Gross reached 10 billion")
-                                }
-                            }.toList()
+                            connection
+                                .queryAsFlow<PopularMovie>(
+                                    """
+                                    SELECT
+                                     title,
+                                     release_date as releasedate, 
+                                     gross_worldwide as grossed
+                                    FROM movies 
+                                    ORDER BY gross_worldwide DESC
+                                    """.trimIndent(),
+                                ).onEach {
+                                    acc += it.grossed
+                                    println("Accumulated gross including (${it.title}): ${String.format("%,d", acc)}")
+                                    if (acc >= 10_000_000_000) {
+                                        cancel("Gross reached 10 billion")
+                                    }
+                                }.toList()
                         movies to acc
                     }
                 }
@@ -112,17 +118,17 @@ class FlowExample : DbBase() {
             val job =
                 async {
                     getDataSource(postgresql).withConnection { connection ->
-                        connection.queryAsFlow<PopularMovie>(
-                            """
-                            SELECT
-                             title,
-                             release_date as releasedate, 
-                             gross_worldwide as grossed
-                            FROM movies 
-                            ORDER BY gross_worldwide DESC
-                            """.trimIndent(),
-                        )
-                            .runningFold(0L to emptyList<PopularMovie>()) { (totalGross, movieList), movie ->
+                        connection
+                            .queryAsFlow<PopularMovie>(
+                                """
+                                SELECT
+                                 title,
+                                 release_date as releasedate, 
+                                 gross_worldwide as grossed
+                                FROM movies 
+                                ORDER BY gross_worldwide DESC
+                                """.trimIndent(),
+                            ).runningFold(0L to emptyList<PopularMovie>()) { (totalGross, movieList), movie ->
                                 val newTotal = totalGross + movie.grossed
                                 newTotal to (movieList + movie)
                             }.takeWhile { (totalGross, _) ->
